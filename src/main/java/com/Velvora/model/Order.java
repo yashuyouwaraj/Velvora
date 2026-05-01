@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Table(name = "orders") // "order" is a reserved keyword in SQL, so we use "orders" as the table name
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
