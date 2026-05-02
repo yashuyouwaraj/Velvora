@@ -1,20 +1,9 @@
 package com.Velvora.service.impl;
 
-import com.Velvora.config.JwtProvider;
-import com.Velvora.domain.USER_ROLE;
-import com.Velvora.model.Cart;
-import com.Velvora.model.User;
-import com.Velvora.model.VerificationCode;
-import com.Velvora.repository.CartRepository;
-import com.Velvora.repository.UserRepository;
-import com.Velvora.repository.VerificationCodeRepository;
-import com.Velvora.request.LoginRequest;
-import com.Velvora.response.AuthResponse;
-import com.Velvora.response.SignupRequest;
-import com.Velvora.service.AuthService;
-import com.Velvora.service.EmailService;
-import com.Velvora.utils.OtpUtil;
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,11 +13,25 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.Velvora.config.JwtProvider;
+import com.Velvora.domain.USER_ROLE;
+import com.Velvora.model.Cart;
+import com.Velvora.model.Seller;
+import com.Velvora.model.User;
+import com.Velvora.model.VerificationCode;
+import com.Velvora.repository.CartRepository;
+import com.Velvora.repository.SellerRepository;
+import com.Velvora.repository.UserRepository;
+import com.Velvora.repository.VerificationCodeRepository;
+import com.Velvora.request.LoginRequest;
+import com.Velvora.response.AuthResponse;
+import com.Velvora.response.SignupRequest;
+import com.Velvora.service.AuthService;
+import com.Velvora.service.EmailService;
+import com.Velvora.utils.OtpUtil;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -40,24 +43,43 @@ public class AuthServiceImpl implements AuthService {
     private final VerificationCodeRepository verificationCodeRepository;
     private final EmailService emailService;
     private final CustomUserServiceImpl customUserService;
+    private final SellerRepository sellerRepository;
 
     @Override
-    public void sentLoginOtp(String email) throws Exception {
-        String SIGNING_PREFIX="signin_";
+    public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
+        String SIGNING_PREFIX="signing_";
+//        String SELLER_PREFIX="seller_";
 
-        if(email.startsWith(SIGNING_PREFIX)){
-            email=email.substring(SIGNING_PREFIX.length());
-            User user = userRepository.findByEmail(email);
+        if(email.startsWith(SIGNING_PREFIX)) {
+            email = email.substring(SIGNING_PREFIX.length());
 
-            if(user==null){
-                throw new Exception("User not found with email: "+email);
+            if (role == null) {
+                throw new Exception("Role is required for signing OTP");
+            }
+
+            if (USER_ROLE.ROLE_CUSTOMER.equals(role)) {
+                User user = userRepository.findByEmail(email);
+                if (user == null) {
+                    throw new Exception("User not found with email: " + email);
+                }
+            } else if (USER_ROLE.ROLE_SELLER.equals(role)) {
+                Seller seller = sellerRepository.findByEmail(email);
+                if (seller == null) {
+                    throw new Exception("Seller not found with email: " + email);
+                }
+            } else {
+                throw new Exception("Invalid role for signing otp");
             }
         }
 
-        VerificationCode isExist = verificationCodeRepository.findByEmail(email);
 
-        if(isExist!=null){
-            verificationCodeRepository.delete(isExist);
+
+
+
+        List<VerificationCode> existingCodes = verificationCodeRepository.findAllByEmail(email);
+
+        if(!existingCodes.isEmpty()){
+            verificationCodeRepository.deleteAll(existingCodes);
         }
 
         String otp = OtpUtil.generateOtp();
@@ -77,9 +99,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String createUser(SignupRequest req) throws Exception {
 
-        VerificationCode verificationCode = verificationCodeRepository.findByEmail(req.getEmail());
+        VerificationCode verificationCode = verificationCodeRepository.findByEmailAndOtp(req.getEmail(), req.getOtp());
 
-        if(verificationCode==null || !verificationCode.getOtp().equals(req.getOtp())){
+        if(verificationCode==null){
             throw new Exception("Wrong otp....");
         }
 
@@ -134,12 +156,18 @@ public class AuthServiceImpl implements AuthService {
     private Authentication authenticate(String username, String otp) {
         UserDetails userDetails= customUserService.loadUserByUsername(username);
 
+        String SELLER_PREFIX="seller_";
+//        username = username.substring(SIGNING_PREFIX.length());
+        if(username.startsWith(SELLER_PREFIX)){
+            username=username.substring(SELLER_PREFIX.length());
+        }
+
         if(userDetails==null){
             throw new BadCredentialsException("User not found with email: " + username);
         }
-        VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
+        VerificationCode verificationCode = verificationCodeRepository.findByEmailAndOtp(username, otp);
 
-        if(verificationCode==null || !verificationCode.getOtp().equals(otp)){
+        if(verificationCode==null){
             throw new BadCredentialsException("Invalid OTP");
         }
 

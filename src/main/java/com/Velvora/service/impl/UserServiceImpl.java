@@ -15,12 +15,17 @@ public class UserServiceImpl implements UserService {
     private final JwtProvider jwtProvider;
 
     @Override
-    public User findUserByJwtToken(String jwt) {
-        return null;
+    public User findUserByJwtToken(String jwt) throws Exception {
+        String email = jwtProvider.getEmailFromToken(jwt);
+        return this.findUserByEmail(email);
     }
 
     @Override
     public User findUserByEmail(String email) {
-        return null;
+        User user = userRepository.findByEmail(email);
+        if(user == null) {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+        return user;
     }
 }

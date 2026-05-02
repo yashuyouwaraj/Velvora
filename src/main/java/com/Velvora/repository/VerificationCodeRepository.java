@@ -1,9 +1,14 @@
 package com.Velvora.repository;
 
-import com.Velvora.model.VerificationCode;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+
+import com.Velvora.model.VerificationCode;
 
 public interface VerificationCodeRepository extends JpaRepository<VerificationCode,Long> {
     VerificationCode findByEmail(String email);
+    VerificationCode findByOtp(String otp);
+    List<VerificationCode> findAllByEmail(String email);
+    VerificationCode findByEmailAndOtp(String email, String otp);
 }

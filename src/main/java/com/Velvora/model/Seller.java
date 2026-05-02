@@ -2,8 +2,20 @@ package com.Velvora.model;
 
 import com.Velvora.domain.AccountStatus;
 import com.Velvora.domain.USER_ROLE;
-import jakarta.persistence.*;
-import lombok.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -38,7 +50,8 @@ public class Seller {
 
     private USER_ROLE role = USER_ROLE.ROLE_SELLER;
 
-    private boolean isEmailVerified = false;
+    @Column(name = "email_verified", nullable = false)
+    private Boolean emailVerified = false;
 
     private AccountStatus accountStatus = AccountStatus.PENDING_VERIFICATION;
 }
