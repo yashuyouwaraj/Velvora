@@ -4,6 +4,7 @@ import com.Velvora.domain.USER_ROLE;
 import com.Velvora.model.User;
 import com.Velvora.model.VerificationCode;
 import com.Velvora.repository.UserRepository;
+import com.Velvora.request.LoginRequest;
 import com.Velvora.response.ApiResponse;
 import com.Velvora.response.AuthResponse;
 import com.Velvora.response.SignupRequest;
@@ -33,6 +34,7 @@ public class AuthController {
 
         return ResponseEntity.ok(res);
     }
+
     @PostMapping("/sent/login-signup-otp")
     public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody VerificationCode req) throws Exception {
         authService.sentLoginOtp(req.getEmail());
@@ -42,6 +44,13 @@ public class AuthController {
         res.setMessage("OTP sent successfully to "+req.getEmail());
 
         return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/signing")
+    public ResponseEntity<AuthResponse> loginHandler(@RequestBody LoginRequest req){
+        AuthResponse authResponse = authService.signing(req);
+
+        return ResponseEntity.ok(authResponse);
     }
 
 }
