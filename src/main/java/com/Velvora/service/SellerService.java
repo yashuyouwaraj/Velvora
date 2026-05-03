@@ -3,12 +3,13 @@ package com.Velvora.service;
 import java.util.List;
 
 import com.Velvora.domain.AccountStatus;
+import com.Velvora.exceptions.SellerException;
 import com.Velvora.model.Seller;
 
 public interface SellerService {
     Seller getSellerProfile(String jwt);
     Seller createSeller(Seller seller);
-    Seller getSellerById(Long id);
+    Seller getSellerById(Long id) throws SellerException;
     Seller getSellerByEmail(String email);
     List<Seller> getAllSellers(AccountStatus status);
     Seller updateSellerProfile(Long id, Seller seller) throws Exception;

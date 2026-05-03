@@ -2,6 +2,7 @@ package com.Velvora.controller;
 
 import java.util.List;
 
+import com.Velvora.exceptions.SellerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,7 +81,7 @@ public class SellerController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Seller> getSellerById(@PathVariable Long id){
+    public ResponseEntity<Seller> getSellerById(@PathVariable Long id) throws SellerException {
         Seller seller = sellerService.getSellerById(id);
         if(seller == null) {
             return ResponseEntity.notFound().build();

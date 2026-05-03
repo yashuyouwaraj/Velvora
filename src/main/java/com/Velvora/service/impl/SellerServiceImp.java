@@ -2,6 +2,7 @@ package com.Velvora.service.impl;
 
 import java.util.List;
 
+import com.Velvora.exceptions.SellerException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +58,8 @@ public class SellerServiceImp implements SellerService {
     }
 
     @Override
-    public Seller getSellerById(Long id) {
-        return sellerRepository.findById(id).orElse(null);
+    public Seller getSellerById(Long id) throws SellerException{
+        return sellerRepository.findById(id).orElseThrow(()-> new SellerException("Seller not found with id "+id));
     }
 
     @Override
