@@ -3,6 +3,8 @@ package com.Velvora.controller;
 import java.util.List;
 
 import com.Velvora.exceptions.SellerException;
+import com.Velvora.model.SellerReport;
+import com.Velvora.service.SellerReportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +40,7 @@ public class SellerController {
     private final VerificationCodeRepository verificationCodeRepository;
     private final AuthService authService;
     private final EmailService emailService;
+    private final SellerReportService sellerReportService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> loginSeller(@RequestBody LoginRequest req) throws Exception {
@@ -95,12 +98,12 @@ public class SellerController {
         return ResponseEntity.ok(seller);
     }
 
-//    @GetMapping("/report")
-//    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt){
-//        Seller seller = sellerService.getSellerProfile(jwt);
-//        SellerReport report = sellerReportService.getSellerReport(seller);
-//        return ResponseEntity.ok(report);
-//    }
+    @GetMapping("/report")
+    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt){
+        Seller seller = sellerService.getSellerProfile(jwt);
+        SellerReport report = sellerReportService.getSellerReport(seller);
+        return ResponseEntity.ok(report);
+    }
 
     @GetMapping({"", "/"})
     public ResponseEntity<List<Seller>> getAllSellers(@RequestParam(required = false) AccountStatus status){

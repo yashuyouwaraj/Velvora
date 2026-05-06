@@ -24,6 +24,8 @@ public class OrderItem {
 
     private int quantity;
 
+    private Product product;
+
     private Integer mrpPrice;
 
     private  Integer sellingPrice;
