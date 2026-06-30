@@ -5,6 +5,8 @@ import Navbar from "./customer/components/Navbar/Navbar";
 import customTheme from "./Theme/customTheme";
 import Home from "./customer/pages/Home";
 import Product from "./customer/pages/Product/Product";
+import ProductDetails from "./customer/pages/Page Details/ProductDetails";
+import Review from "./customer/pages/Review/Review";
 
 function App() {
   return (
@@ -12,7 +14,9 @@ function App() {
       <div>
         <Navbar />
         {/* <Home /> */}
-        <Product />
+        {/* <Product /> */}
+        {/* <ProductDetails /> */}
+        <Review />
       </div>
     </ThemeProvider>
   );
