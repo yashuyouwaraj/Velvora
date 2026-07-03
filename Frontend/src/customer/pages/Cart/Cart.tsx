@@ -5,9 +5,12 @@ import { teal } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import { Button, IconButton } from "@mui/material";
 import PricingCard from "./PricingCard";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [couponCode, setCouponCode] = useState<string>("");
+
+  const navigate=useNavigate();
 
   const handleChange = (e: any) => {
     setCouponCode(e.target.value);
@@ -56,7 +59,7 @@ const Cart = () => {
           <div className="border rounded-md">
             <PricingCard />
             <div className="p-5">
-                <Button fullWidth variant="contained" sx={{py:"11px"}}>
+                <Button onClick={()=> navigate("/checkout")} fullWidth variant="contained" sx={{py:"11px"}}>
                     Buy Now
                 </Button>
             </div>

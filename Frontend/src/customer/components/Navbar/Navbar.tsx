@@ -17,12 +17,15 @@ import {
 import CategorySheet from "./CategorySheet";
 import { mainCategory } from "../../../data/category/mainCategory";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const theme = useTheme();
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
   const [selectedCategory, setSelectedCategory] = useState("men");
   const [showCategorySheet, setShowCategorySheet] = useState(false);
+
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -35,7 +38,7 @@ const Navbar = () => {
                   <MenuIcon />
                 </IconButton>
               )}
-              <h1 className="logo cursor-pointer text-lg md:text-2xl text-primary-color ">
+              <h1 onClick={() => navigate("/")} className="logo cursor-pointer text-lg md:text-2xl text-primary-color ">
                 Velvora
               </h1>
             </div>
@@ -58,8 +61,8 @@ const Navbar = () => {
             <IconButton>
               <SearchIcon />
             </IconButton>
-            {false ? (
-              <Button className="flex items-center gap-2">
+            {true ? (
+              <Button onClick={() => navigate("/account/orders")} className="flex items-center gap-2">
                 <Avatar
                   sx={{ width: 29, height: 29 }}
                   src="https://plus.unsplash.com/premium_photo-1671656349218-5218444643d8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -72,14 +75,14 @@ const Navbar = () => {
             <IconButton>
               <FavoriteBorder sx={{ fontSize: 29 }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => navigate("/cart")}>
               <AddShoppingCart
                 className="text-gray-700"
                 sx={{ fontSize: 29 }}
               />
             </IconButton>
             {isLarge && (
-              <Button variant="outlined" startIcon={<Storefront />}>
+              <Button onClick={() => navigate("/become-seller")} variant="outlined" startIcon={<Storefront />}>
                 Become Seller
               </Button>
             )}
