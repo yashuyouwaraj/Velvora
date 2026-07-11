@@ -6,6 +6,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { useAppDispatch, useAppSelector } from "../../../State/Store";
+import { useEffect } from "react";
+import { fetchSellerProducts } from "../../../State/seller/sellerProductSlice";
+import { Product } from "../../../types/ProductTypes";
+import { Button, IconButton } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -46,6 +52,12 @@ const rows = [
 ];
 
 export default function ProductTable() {
+  const dispatch = useAppDispatch();
+  const { sellerProduct } = useAppSelector((store) => store);
+
+  useEffect(() => {
+    dispatch(fetchSellerProducts(localStorage.getItem("jwt")));
+  }, []);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -61,17 +73,29 @@ export default function ProductTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
+          {sellerProduct.products.map((item: Product) => (
+            <StyledTableRow key={item.id}>
               <StyledTableCell component="th" scope="row">
-                {row.name}
+                <div className="flex gap-1 flex-wrap">
+                  {item.images.map((image) => (
+                    <img className="w-20 rounded-md" src={image} alt="" />
+                  ))}
+                </div>
               </StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
+              <StyledTableCell align="right">{item.title}</StyledTableCell>
+              <StyledTableCell align="right">{item.mrpPrice}</StyledTableCell>
+              <StyledTableCell align="right">{item.sellingPrice}</StyledTableCell>
+              <StyledTableCell align="right">{item.color}</StyledTableCell>
+              <StyledTableCell align="right">
+                <Button size="small">
+                  in_stock
+                </Button>
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                <IconButton color="primary" size="small">
+                  <Edit />
+                </IconButton>
+              </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>

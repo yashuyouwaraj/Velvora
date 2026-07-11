@@ -24,6 +24,7 @@ public class OrderItem {
 
     private int quantity;
 
+    @ManyToOne
     private Product product;
 
     private Integer mrpPrice;

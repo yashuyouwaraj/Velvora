@@ -10,7 +10,7 @@ import { electronicsLevelThree } from "../../../data/category/level three/electr
 import Yup from "yup";
 import { useFormik } from "formik";
 import {
-    Button,
+  Button,
   CircularProgress,
   FormControl,
   FormHelperText,
@@ -26,6 +26,8 @@ import { uploadToCloudinary } from "../../../util/uploadToCloudinary";
 import CloseIcon from "@mui/icons-material/Close";
 import { colors } from "../../../data/Filter/color";
 import { mainCategory } from "../../../data/category/mainCategory";
+import { useAppDispatch } from "../../../State/Store";
+import { createProduct } from "../../../State/seller/sellerProductSlice";
 
 const categoryTwo: { [key: string]: any[] } = {
   men: menLevelTwo,
@@ -72,6 +74,7 @@ const categoryThree: { [key: string]: any[] } = {
 const AddProductForm = () => {
   const [uploadImage, setUploadingImage] = useState(false);
   const [snackbarOpen, setOpenSnackbar] = useState(false);
+  const dispatch = useAppDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -89,6 +92,9 @@ const AddProductForm = () => {
     },
     onSubmit: (values) => {
       console.log(values);
+      dispatch(
+        createProduct({ request: values, jwt: localStorage.getItem("jwt") }),
+      );
     },
   });
 
@@ -292,10 +298,16 @@ const AddProductForm = () => {
               required
             >
               <InputLabel id="category-label">Category</InputLabel>
-              <Select labelId="category-label" id="category" name="category" value={formik.values.category} onChange={formik.handleChange} label="Category">    
-
-                {mainCategory.map((item)=>(
-                    <MenuItem value={item.categoryId} >{item.name}</MenuItem>
+              <Select
+                labelId="category-label"
+                id="category"
+                name="category"
+                value={formik.values.category}
+                onChange={formik.handleChange}
+                label="Category"
+              >
+                {mainCategory.map((item) => (
+                  <MenuItem value={item.categoryId}>{item.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -303,14 +315,22 @@ const AddProductForm = () => {
           <Grid size={{ xs: 12, md: 4, lg: 4 }}>
             <FormControl
               fullWidth
-              error={formik.touched.category2 && Boolean(formik.errors.category2)}
+              error={
+                formik.touched.category2 && Boolean(formik.errors.category2)
+              }
               required
             >
               <InputLabel id="category2-label">Second Category</InputLabel>
-              <Select labelId="category2-label" id="category2" name="category" value={formik.values.category2} onChange={formik.handleChange} label="Category2">    
-
-                {mainCategory.map((item)=>(
-                    <MenuItem value={item.categoryId} >{item.name}</MenuItem>
+              <Select
+                labelId="category2-label"
+                id="category2"
+                name="category"
+                value={formik.values.category2}
+                onChange={formik.handleChange}
+                label="Category2"
+              >
+                {mainCategory.map((item) => (
+                  <MenuItem value={item.categoryId}>{item.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -319,22 +339,36 @@ const AddProductForm = () => {
           <Grid size={{ xs: 12, md: 4, lg: 4 }}>
             <FormControl
               fullWidth
-              error={formik.touched.category3 && Boolean(formik.errors.category3)}
+              error={
+                formik.touched.category3 && Boolean(formik.errors.category3)
+              }
               required
             >
               <InputLabel id="category3-label">Third Category</InputLabel>
-              <Select labelId="category3-label" id="category3" name="category" value={formik.values.category3} onChange={formik.handleChange} label="Category3">    
-
-                {mainCategory.map((item)=>(
-                    <MenuItem value={item.categoryId} >{item.name}</MenuItem>
+              <Select
+                labelId="category3-label"
+                id="category3"
+                name="category"
+                value={formik.values.category3}
+                onChange={formik.handleChange}
+                label="Category3"
+              >
+                {mainCategory.map((item) => (
+                  <MenuItem value={item.categoryId}>{item.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
 
           <Grid size={{ xs: 12 }}>
-            <Button sx={{p:"14px"}} color="primary" variant="contained" fullWidth type="submit">
-                {false ? <CircularProgress size="small" /> : "Submit"}
+            <Button
+              sx={{ p: "14px" }}
+              color="primary"
+              variant="contained"
+              fullWidth
+              type="submit"
+            >
+              {false ? <CircularProgress size="small" /> : "Submit"}
             </Button>
           </Grid>
         </Grid>

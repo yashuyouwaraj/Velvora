@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import { teal } from "@mui/material/colors";
 import { Button, Divider } from "@mui/material";
@@ -14,19 +14,42 @@ import AddIcon from "@mui/icons-material/Add";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import SimilarProduct from "./SimilarProduct";
 import ReviewCard from "../Review/ReviewCard";
+import { useAppDispatch, useAppSelector } from "../../../State/Store";
+import { useParams } from "react-router";
+import { fetchProductById } from "../../../State/customer/ProductSlice";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
+  const dispatch = useAppDispatch();
+  const { productId } = useParams();
+  const [activeImage, setActiveImage] = useState(0);
 
+  const { product } = useAppSelector((store) => store);
+
+  useEffect(() => {
+    // TS workaround: fetchProductById expects `productId: unknown` because createAsyncThunk argument type isn't inferred here.
+
+    if (!productId) return;
+
+    const id = Number(productId);
+    if (Number.isNaN(id) || id <= 0) return;
+
+    dispatch(fetchProductById(id as any));
+  }, [productId, dispatch]);
+
+  const handleActiveImage = (value: number) => {
+    setActiveImage(value);
+  };
   return (
     <div className="px-5 lg:px-20 pt-10">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <section className="flex flex-col lg:flex-row gap-5">
           <div className="w-full lg:w-[15%] flex flex-wrap lg:flex-col gap-3">
-            {[1, 1, 1, 1].map((item) => (
+            {product.product?.images.map((item,index) => (
               <img
                 className="lg:w-full w-[50px] rounded-md cursor-pointer"
-                src="https://m.media-amazon.com/images/I/51N4DhmcB8L.jpg"
+                onClick={() => handleActiveImage(index)}
+                src={item}
                 alt=""
               />
             ))}
@@ -34,28 +57,28 @@ const ProductDetails = () => {
           <div>
             <img
               className="w-full rounded-md"
-              src="https://m.media-amazon.com/images/I/61t5Rq80yeL._SY879_.jpg"
+              src={product.product?.images[activeImage]}
               alt=""
             />
           </div>
         </section>
 
         <section>
-          <h1 className="font-bold text-lg text-primary-color">Ram Clothing</h1>
-          <p className="text-gray-500 font-semibold">men black shirt</p>
+          <h1 className="font-bold text-lg text-primary-color">{product.product?.seller?.businessDetails.businessName}</h1>
+          <p className="text-gray-500 font-semibold">{product.product?.title}</p>
           <div className="flex justify-between items-center py-2 border w-[180px] px-3 mt-5">
             <div className="flex gap-1 items-center">
               <span>4</span>
               <StarIcon sx={{ color: teal[500], fontSize: "17px" }} />
             </div>
             <Divider />
-            <span>234 Ratings</span>
+            <span>{product.product?.numRatings} Ratings</span>
           </div>
           <div>
             <div className="price flex items-center gap-3 mt-5 text-2xl">
-              <span className="font-sans text-gray-800">₹ 400</span>
-              <span className="line-through text-gray-400">₹ 999</span>
-              <span className="text-primary-color font-semibold">60%</span>
+              <span className="font-sans text-gray-800">₹ {product.product?.sellingPrice}</span>
+              <span className="line-through text-gray-400">₹ {product.product?.mrpPrice}</span>
+              <span className="text-primary-color font-semibold">{product.product?.discountPercent}%</span>
             </div>
             <p className="text-sm">
               Inclusive of all taxes. Free Shipping above ₹1500.
@@ -121,9 +144,7 @@ const ProductDetails = () => {
 
           <div className="mt-5">
             <p>
-              Perfect for Event: Festive Wear Saree | Party Wear Saree |
-              Occasional Wear Saree | Traditional Wear Saree | Wedding Wear
-              Saree | Reception Wear Saree | Butta Sarees Latest Design
+              {product.product?.description}
             </p>
           </div>
 
@@ -135,9 +156,7 @@ const ProductDetails = () => {
       </div>
 
       <div className="mt-20">
-        <h1 className="text-lg font-bold">
-          Similar Product
-        </h1>
+        <h1 className="text-lg font-bold">Similar Product</h1>
         <div className="pt-5">
           <SimilarProduct />
         </div>
