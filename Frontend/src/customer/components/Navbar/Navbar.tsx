@@ -18,12 +18,14 @@ import CategorySheet from "./CategorySheet";
 import { mainCategory } from "../../../data/category/mainCategory";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../../State/Store";
 
 const Navbar = () => {
   const theme = useTheme();
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
   const [selectedCategory, setSelectedCategory] = useState("men");
   const [showCategorySheet, setShowCategorySheet] = useState(false);
+  const {auth} = useAppSelector(store=>store)
 
   const navigate = useNavigate();
 
@@ -61,16 +63,16 @@ const Navbar = () => {
             <IconButton>
               <SearchIcon />
             </IconButton>
-            {true ? (
+            {auth.user ? (
               <Button onClick={() => navigate("/account/orders")} className="flex items-center gap-2">
                 <Avatar
                   sx={{ width: 29, height: 29 }}
                   src="https://plus.unsplash.com/premium_photo-1671656349218-5218444643d8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 />
-                <h1 className="font-semibold hidden lg:block">Yashu</h1>
+                <h1 className="font-semibold hidden lg:block">{auth.user?.fullName}</h1>
               </Button>
             ) : (
-              <Button variant="contained">Login</Button>
+              <Button onClick={()=>navigate("/login")} variant="contained">Login</Button>
             )}
             <IconButton>
               <FavoriteBorder sx={{ fontSize: 29 }} />
