@@ -176,6 +176,22 @@ app.cors.allowed-origins
 - Seller product not appearing: ensure the seller is authenticated and the product fields include category, category2, category3, and quantity.
 - CORS errors: make sure the frontend URL is allowed in the backend CORS configuration.
 
+- Provider-style DB URL (Aiven / other): you can paste either the provider URL or a JDBC URL.
+   - JDBC (preferred): `jdbc:mysql://host:port/database?sslMode=REQUIRED&serverTimezone=UTC`
+   - Provider form (accepted by the app): `mysql://user:pass@host:port/database?ssl-mode=REQUIRED`
+   - If your password contains special characters, prefer separate `DB_USERNAME` and `DB_PASSWORD` environment variables.
+
+- If your managed DB enforces `sql_require_primary_key` and the app fails to start due to schema differences, there are two options:
+   1. Manual SQL: run the diagnostic SQLs (requires ALTER privileges) to add a primary key and AUTO_INCREMENT to `user.id` and fix referencing foreign keys.
+   2. Add a Flyway migration: create SQL migration files under `Backend/src/main/resources/db/migration` so schema fixes run at startup in a controlled, versioned way.
+
+- Local build/run notes (Windows PowerShell):
+   ```powershell
+   Set-Location 'd:\Full Stack\Project\Java-Springboot\Ecommerce Project\Backend'
+   .\mvnw.cmd --% -DskipTests -Dmaven.test.skip=true clean package
+   java -jar target/*.jar
+   ```
+
 ## 11. Future Improvements
 - Add product image upload to a dedicated cloud storage service.
 - Improve admin analytics and sales charts.
