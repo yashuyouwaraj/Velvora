@@ -28,7 +28,7 @@ const ChatWidget = () => {
 
     try {
       const response = await api.post("/api/chat/completion", {
-        model: "meta/llama-3.2-1b-instruct",
+        model: "meta/llama-3.2-3b-instruct",
         messages: [{ role: "user", content: userMessage.content }],
         temperature: 0.2,
         top_p: 0.7,

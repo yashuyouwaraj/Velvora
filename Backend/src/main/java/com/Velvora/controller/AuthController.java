@@ -25,6 +25,9 @@ public class AuthController {
     private final UserRepository userRepository;
     private final AuthService authService;
 
+    @org.springframework.beans.factory.annotation.Value("${ENABLE_TEST_OTP:false}")
+    private boolean enableTestOtp;
+
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignupRequest req) throws Exception {
         String jwt=authService.createUser(req);
@@ -38,11 +41,13 @@ public class AuthController {
 
     @PostMapping("/sent/login-signup-otp")
     public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody LoginOtpRequest req) throws Exception {
-        authService.sentLoginOtp(req.getEmail(),req.getRole());
+        String otp = authService.sentLoginOtp(req.getEmail(),req.getRole());
 
         ApiResponse res = new ApiResponse();
-
         res.setMessage("OTP sent successfully to "+req.getEmail());
+        if(enableTestOtp){
+            res.setDebugOtp(otp);
+        }
 
         return ResponseEntity.ok(res);
     }

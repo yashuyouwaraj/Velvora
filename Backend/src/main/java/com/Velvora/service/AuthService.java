@@ -6,7 +6,7 @@ import com.Velvora.response.AuthResponse;
 import com.Velvora.response.SignupRequest;
 
 public interface AuthService {
-    void sentLoginOtp(String email, USER_ROLE role) throws Exception;
+    String sentLoginOtp(String email, USER_ROLE role) throws Exception;
 
     String createUser(SignupRequest req) throws Exception;
 

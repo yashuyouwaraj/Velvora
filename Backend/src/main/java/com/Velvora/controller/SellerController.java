@@ -41,6 +41,8 @@ public class SellerController {
     private final AuthService authService;
     private final EmailService emailService;
     private final SellerReportService sellerReportService;
+    @org.springframework.beans.factory.annotation.Value("${ENABLE_TEST_OTP:false}")
+    private boolean enableTestOtp;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> loginSeller(@RequestBody LoginRequest req) throws Exception {
@@ -78,7 +80,16 @@ public class SellerController {
         String subject = "Velvora Email Verification Code";
         String text = "Welcome to Velvora! verify your account using this link ";
         String frontend_url="http://localhost:3000/verify-seller/";
-        emailService.sendVerificationEmail(seller.getEmail(),verificationCode.getOtp(),subject,text+frontend_url);
+        try{
+            emailService.sendVerificationEmail(seller.getEmail(),verificationCode.getOtp(),subject,text+frontend_url);
+        } catch (Exception e){
+            System.err.println("Failed to send seller verification email: " + e.getMessage());
+        }
+
+        if(enableTestOtp){
+            return ResponseEntity.status(HttpStatus.CREATED).header("X-Debug-Otp", otp).body(savedSeller);
+        }
+
         return new ResponseEntity<>(savedSeller, HttpStatus.CREATED);
 
     }

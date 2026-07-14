@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private final SellerRepository sellerRepository;
 
     @Override
-    public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
+    public String sentLoginOtp(String email, USER_ROLE role) throws Exception {
         String SIGNING_PREFIX="signing_";
 //        String SELLER_PREFIX="seller_";
 
@@ -92,7 +92,15 @@ public class AuthServiceImpl implements AuthService {
         String subject = "Velvora OTP Verification";
         String text = "Your OTP for Velvora is: " + otp;
 
-        emailService.sendVerificationEmail(email, otp, subject, text);
+        try {
+            emailService.sendVerificationEmail(email, otp, subject, text);
+        } catch (Exception e) {
+            // If email sending fails, don't fail the whole flow; return the otp so caller
+            // can surface it in test/debug mode.
+            System.err.println("Failed to send verification email: " + e.getMessage());
+        }
+
+        return otp;
 
     }
 
