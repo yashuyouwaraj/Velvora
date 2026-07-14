@@ -2,12 +2,13 @@ package com.Velvora.model;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,8 +37,8 @@ public class Review {
     @Column(nullable = false)
     private double rating;
 
-    @ElementCollection
-    private List<String> productImages;
+    @OneToMany(mappedBy = "review", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewImage> productImages = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne

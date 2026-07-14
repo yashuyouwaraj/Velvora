@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.Velvora.exceptions.ProductException;
 import com.Velvora.model.Category;
 import com.Velvora.model.Product;
+import com.Velvora.model.ProductImage;
 import com.Velvora.model.Seller;
 import com.Velvora.repository.CategoryRepository;
 import com.Velvora.repository.ProductRepository;
@@ -66,7 +67,15 @@ public class ProductServiceImpl implements ProductService {
         product.setTitle(req.getTitle());
         product.setColor(req.getColor());
         product.setSellingPrice(req.getSellingPrice());
-        product.setImages(req.getImages());
+        // map image URL strings to ProductImage entities
+        if (req.getImages() != null) {
+            for (String url : req.getImages()) {
+                ProductImage img = new ProductImage();
+                img.setUrl(url);
+                img.setProduct(product);
+                product.getImages().add(img);
+            }
+        }
         product.setMrpPrice(req.getMrpPrice());
         product.setQuantity(req.getQuantity());
         product.setSizes(req.getSizes());

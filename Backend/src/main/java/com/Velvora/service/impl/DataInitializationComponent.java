@@ -76,7 +76,13 @@ public class DataInitializationComponent implements CommandLineRunner {
                 product.setDiscountPercent((int) Math.round((mrp - price) * 100d / mrp));
                 product.setQuantity(25);
                 product.setColor("Assorted");
-                product.setImages(List.of(item.path("image").asText()));
+                String imageUrl = item.path("image").asText();
+                if (imageUrl != null && !imageUrl.isEmpty()) {
+                    com.Velvora.model.ProductImage img = new com.Velvora.model.ProductImage();
+                    img.setUrl(imageUrl);
+                    img.setProduct(product);
+                    product.getImages().add(img);
+                }
                 product.setNumRatings(item.path("rating").path("count").asInt());
                 product.setSizes("Standard");
                 product.setCategory(category);

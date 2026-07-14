@@ -3,6 +3,7 @@ package com.Velvora.service.impl;
 import com.Velvora.model.Product;
 import com.Velvora.model.Review;
 import com.Velvora.model.User;
+import com.Velvora.model.ReviewImage;
 import com.Velvora.repository.ReviewRepository;
 import com.Velvora.request.CreateReviewRequest;
 import com.Velvora.service.ReviewService;
@@ -23,7 +24,14 @@ public class ReviewServiceImpl implements ReviewService {
         review.setProduct(product);
         review.setReviewText(req.getReviewText());
         review.setRating(req.getReviewRating());
-        review.setProductImages(req.getProductImages());
+        if (req.getProductImages() != null) {
+            for (String url : req.getProductImages()) {
+                ReviewImage img = new ReviewImage();
+                img.setUrl(url);
+                img.setReview(review);
+                review.getProductImages().add(img);
+            }
+        }
 
         product.getReviews().add(review);
         return reviewRepository.save(review);
