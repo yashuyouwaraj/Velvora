@@ -2,6 +2,7 @@ package com.Velvora.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@Slf4j
 public class AppConfig {
     @Value("${app.cors.allowed-origins:http://localhost:3000}")
     private String allowedOrigins;
@@ -48,11 +50,22 @@ public class AppConfig {
                         .map(String::trim)
                         .filter(origin -> !origin.isEmpty())
                         .toList();
-                cfg.setAllowedOriginPatterns(origins);
-                cfg.setAllowedMethods(Collections.singletonList("*"));
-                cfg.setAllowedHeaders(Collections.singletonList("*"));
+
+                if (origins.isEmpty()) {
+                    cfg.addAllowedOriginPattern("*");
+                    log.info("CORS: no origins configured, allowing all origins");
+                } else if (origins.size() == 1 && "*".equals(origins.get(0))) {
+                    cfg.addAllowedOriginPattern("*");
+                    log.info("CORS: wildcard origin enabled");
+                } else {
+                    cfg.setAllowedOriginPatterns(origins);
+                    log.info("CORS: allowed origins = {}", origins);
+                }
+
+                cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                cfg.setAllowedHeaders(List.of("*"));
                 cfg.setAllowCredentials(true);
-                cfg.setExposedHeaders(Collections.singletonList("Authorization"));
+                cfg.setExposedHeaders(List.of("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
                 cfg.setMaxAge(3600L);
                 return cfg;
             }
