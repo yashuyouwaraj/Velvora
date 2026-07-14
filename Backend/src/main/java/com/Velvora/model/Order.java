@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "orders") // "order" is a reserved keyword in SQL, so we use "orders" as the table name
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String orderId;
