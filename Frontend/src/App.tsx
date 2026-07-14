@@ -20,8 +20,7 @@ import Auth from "./customer/pages/Auth/Auth";
 import { fetchUserProfile } from "./State/AuthSlice";
 import PaymentSuccess from "./customer/pages/Payment/PaymentSuccess";
 import Wishlist from "./customer/pages/Wishlist/Wishlist";
-import { createHomeCategories } from "./State/customer/CustomerSlice";
-import { homeCategories } from "./data/HomeCategories";
+import { fetchHomePageData } from "./State/customer/CustomerSlice";
 import ChatWidget from "./component/ChatWidget";
 
 const parseJwtPayload = (token: string) => {
@@ -64,7 +63,7 @@ function App() {
     if (jwt && tokenRole === "ROLE_SELLER") {
       dispatch(fetchSellerProfile(jwt));
     }
-    dispatch(createHomeCategories(homeCategories));
+    dispatch(fetchHomePageData());
   }, [dispatch, jwt, tokenRole]);
 
   useEffect(() => {

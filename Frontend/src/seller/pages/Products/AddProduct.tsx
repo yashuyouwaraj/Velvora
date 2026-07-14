@@ -91,10 +91,14 @@ const AddProductForm = () => {
       sizes: "",
     },
     onSubmit: (values) => {
-      console.log(values);
-      dispatch(
-        createProduct({ request: values, jwt: localStorage.getItem("jwt") }),
-      );
+      const payload = {
+        ...values,
+        quantity: Number(values.quantity || 0),
+        category: values.category,
+        category2: values.category2,
+        category3: values.category3,
+      };
+      dispatch(createProduct({ request: payload, jwt: localStorage.getItem("jwt") }));
     },
   });
 
@@ -324,7 +328,7 @@ const AddProductForm = () => {
               <Select
                 labelId="category2-label"
                 id="category2"
-                name="category"
+                name="category2"
                 value={formik.values.category2}
                 onChange={formik.handleChange}
                 label="Category2"
@@ -348,7 +352,7 @@ const AddProductForm = () => {
               <Select
                 labelId="category3-label"
                 id="category3"
-                name="category"
+                name="category3"
                 value={formik.values.category3}
                 onChange={formik.handleChange}
                 label="Category3"

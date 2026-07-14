@@ -1,5 +1,16 @@
 package com.Velvora.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
 import com.Velvora.exceptions.ProductException;
 import com.Velvora.model.Category;
 import com.Velvora.model.Product;
@@ -8,20 +19,10 @@ import com.Velvora.repository.CategoryRepository;
 import com.Velvora.repository.ProductRepository;
 import com.Velvora.request.CreateProductRequest;
 import com.Velvora.service.ProductService;
+
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +68,7 @@ public class ProductServiceImpl implements ProductService {
         product.setSellingPrice(req.getSellingPrice());
         product.setImages(req.getImages());
         product.setMrpPrice(req.getMrpPrice());
+        product.setQuantity(req.getQuantity());
         product.setSizes(req.getSizes());
         product.setDiscountPercent(discountPercentage);
 

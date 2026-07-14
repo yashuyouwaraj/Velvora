@@ -21,6 +21,7 @@ import { Edit } from '@mui/icons-material';
 import { HomeCategory } from '../../../types/HomeCategoryTypes';
 import { useAppDispatch } from '../../../State/Store';
 import { createHomeCategory, updateHomeCategory } from '../../../State/admin/AdminSlice';
+import { fetchHomePageData } from '../../../State/customer/CustomerSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -104,6 +105,7 @@ export default function HomeCategoryTable({ section, title, data }: HomeCategory
       await dispatch(createHomeCategory(payload));
     }
 
+    await dispatch(fetchHomePageData());
     handleClose();
   };
 
