@@ -168,6 +168,7 @@ RAZORPAY_API_SECRET
 STRIPE_API_KEY
 REACT_APP_API_URL
 app.cors.allowed-origins
+ENABLE_TEST_OTP
 ```
 
 ## 10. Common Issues and Fixes
@@ -191,6 +192,14 @@ app.cors.allowed-origins
    .\mvnw.cmd --% -DskipTests -Dmaven.test.skip=true clean package
    java -jar target/*.jar
    ```
+
+   ### Test OTP mode
+
+   For debugging when email delivery isn't available, set `ENABLE_TEST_OTP=true` in your backend environment. In this mode:
+   - The `/auth/sent/login-signup-otp` response will include `debugOtp` with the generated OTP.
+   - The `/sellers` create endpoint will return the OTP in the `X-Debug-Otp` response header.
+
+   Do NOT enable `ENABLE_TEST_OTP=true` on public production services. Use only in staging or controlled environments.
 
 ## 11. Future Improvements
 - Add product image upload to a dedicated cloud storage service.

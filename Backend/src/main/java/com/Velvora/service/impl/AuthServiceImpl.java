@@ -32,9 +32,11 @@ import com.Velvora.service.EmailService;
 import com.Velvora.utils.OtpUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -83,6 +85,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String otp = OtpUtil.generateOtp();
+        log.info("Generated OTP {} for {}", otp, email);
 
         VerificationCode verificationCode = new VerificationCode();
         verificationCode.setOtp(otp);
@@ -97,7 +100,7 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             // If email sending fails, don't fail the whole flow; return the otp so caller
             // can surface it in test/debug mode.
-            System.err.println("Failed to send verification email: " + e.getMessage());
+            log.error("Failed to send verification email to {}: {}", email, e.getMessage());
         }
 
         return otp;

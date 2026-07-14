@@ -8,6 +8,7 @@ export const sendLoginSignupOtp = createAsyncThunk<any, any>(
     try {
       const response = await api.post("/auth/sent/login-signup-otp", { email });
       console.log("login otp ", response);
+      return response.data;
     } catch (error) {
       console.log("error --- ", error);
     }

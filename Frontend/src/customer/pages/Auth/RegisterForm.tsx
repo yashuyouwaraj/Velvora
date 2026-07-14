@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { sendLoginSignupOtp } from "../../../State/AuthSlice";
 import { useAppDispatch } from "../../../State/Store";
 import { useFormik } from "formik";
@@ -19,8 +19,16 @@ const RegisterForm = () => {
   });
 
   const handleSendOtp = () => {
-    dispatch(sendLoginSignupOtp({ email: formik.values.email }));
+    dispatch(sendLoginSignupOtp({ email: formik.values.email }))
+      .unwrap()
+      .then((data) => {
+        if (data && data.debugOtp) {
+          setDebugOtp(data.debugOtp);
+        }
+      })
+      .catch(() => {});
   };
+  const [debugOtp, setDebugOtp] = useState<string | null>(null);
   return (
     <div>
       <h1 className="text-center font-bold text-xl text-primary-color pb-8">
@@ -68,15 +76,17 @@ const RegisterForm = () => {
           </div>
         )}
 
-        {false && (
-          <Button
-            onClick={handleSendOtp}
-            fullWidth
-            variant="contained"
-            sx={{ py: "11px" }}
-          >
-            send otp
-          </Button>
+        <Button
+          onClick={handleSendOtp}
+          fullWidth
+          variant="contained"
+          sx={{ py: "11px" }}
+        >
+          Send OTP
+        </Button>
+
+        {debugOtp && (
+          <div className="text-sm text-center text-gray-600 pt-2">Debug OTP: {debugOtp}</div>
         )}
 
         <Button
