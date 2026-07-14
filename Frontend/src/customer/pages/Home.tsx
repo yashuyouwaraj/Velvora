@@ -13,6 +13,8 @@ const Home = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { products } = useAppSelector((state) => state.product);
+  const { customer } = useAppSelector((state) => state);
+  const gridCategories = customer.homePageData?.grid ?? [];
 
   useEffect(() => {
     dispatch(fetchAllProducts({ pageNumber: 0 }));
@@ -22,7 +24,7 @@ const Home = () => {
     <>
       <div className="space-y-5 lg:space-y-10 relative pb-20">
         <ElectricCategory products={products} />
-        <CategoryGrid products={products} />
+        <CategoryGrid categories={gridCategories} />
 
         <section className="pt-20">
           <h1 className="text-lg lg:text-4xl font-bold text-primary-color pb-5 lg:pb-10 text-center">
