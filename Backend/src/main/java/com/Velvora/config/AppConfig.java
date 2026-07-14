@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebSecurity
 @Slf4j
 public class AppConfig {
-    @Value("${app.cors.allowed-origins:http://localhost:3000}")
+    @Value("${app.cors.allowed-origins:*}")
     private String allowedOrigins;
 
     @Bean
