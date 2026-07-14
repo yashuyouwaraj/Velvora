@@ -23,6 +23,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@org.springframework.core.annotation.Order(2)
 public class DataInitializationComponent implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
