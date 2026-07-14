@@ -5,11 +5,14 @@ import { Favorite, ModeComment } from "@mui/icons-material";
 import { teal } from "@mui/material/colors";
 import { Product } from "../../../types/ProductTypes";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../State/Store";
+import { addProductToWishlist } from "../../../State/customer/wishlistSlice";
 
 const ProductCard = ({ item }: { item: Product }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     let interval: any;
@@ -24,11 +27,18 @@ const ProductCard = ({ item }: { item: Product }) => {
     return () => clearInterval(interval);
   }, [isHovered]);
 
+  const handleWishlist = (event: any) => {
+    event.stopPropagation();
+    item.id && dispatch(addProductToWishlist({ productId: item.id }));
+  };
+
   return (
     <>
       <div
         onClick={() =>
-          navigate(`/product-details/${item.category?.categoryId}/${item.title}/${item.id}`)
+          navigate(
+            `/product-details/${item.category?.categoryId}/${item.title}/${item.id}`,
+          )
         }
         className="group px-4 relative"
       >
@@ -50,7 +60,11 @@ const ProductCard = ({ item }: { item: Product }) => {
           {isHovered && (
             <div className="indicator flex flex-col items-center space-y-2">
               <div className="flex gap-3">
-                <Button variant="contained" color="secondary">
+                <Button
+                  onClick={handleWishlist}
+                  variant="contained"
+                  color="secondary"
+                >
                   <Favorite sx={{ color: teal[500] }} />
                 </Button>
                 <Button variant="contained" color="secondary">
@@ -62,7 +76,7 @@ const ProductCard = ({ item }: { item: Product }) => {
         </div>
         <div className="details pt-3 space-y-1 group-hover-effect rounded-md">
           <div className="name">
-            <h1>{item.seller?.businessDetails.businessName}</h1>
+            <h1>{item.seller?.businessDetails?.businessName || "Velvora Select"}</h1>
             <p>{item.title}</p>
           </div>
           <div className="price flex items-center gap-3">

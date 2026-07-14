@@ -21,7 +21,7 @@ import { useParams, useSearchParams } from "react-router";
 const Product = () => {
   const theme = useTheme();
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
-  const [sort, setSort] = useState();
+  const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
   const dispatch = useAppDispatch();
   const [searchParam, setSearchParam] = useSearchParams();
@@ -45,21 +45,23 @@ const Product = () => {
     const pageNumber = (page-1)
 
     const newFilter={
+        category,
         color:color || "",
         minPrice:minPrice?Number(minPrice):undefined,
         maxPrice:maxPrice?Number(maxPrice):undefined,
         minDiscount,
-        pageNumber
+        pageNumber,
+        sort: sort || undefined,
     }
 
     dispatch(fetchAllProducts(newFilter));
-  }, [category,searchParam]);
+  }, [category, searchParam, page, sort, dispatch]);
 
   return (
     <div className="-z-10 mt-10">
       <div>
         <h1 className="text-3xl text-center font-bold text-gray-700 pb-5 px-9 uppercase space-x-2">
-          women sarees
+          {category ? category.replaceAll("-", " ") : "All products"}
         </h1>
       </div>
       <div className="lg:flex">
@@ -92,20 +94,19 @@ const Product = () => {
               >
                 <MenuItem value={"price_low"}>Price : Low - High</MenuItem>
                 <MenuItem value={"price_high"}>Price: High - Low</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
               </Select>
             </FormControl>
           </div>
           <Divider />
           <section className="products_section grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-5 px-5 justify-center">
             {product.products.map((item) => (
-              <ProductCard item={item} />
+              <ProductCard key={item.id} item={item} />
             ))}
           </section>
           <div className="flex justify-center py-10">
             <Pagination
               onChange={(e, value) => handlePageChange(value)}
-              count={10}
+              count={product.totalPages}
               variant="outlined"
               color="primary"
             />

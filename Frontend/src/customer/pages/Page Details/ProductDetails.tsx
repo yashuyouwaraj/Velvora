@@ -17,14 +17,18 @@ import ReviewCard from "../Review/ReviewCard";
 import { useAppDispatch, useAppSelector } from "../../../State/Store";
 import { useParams } from "react-router";
 import { fetchProductById } from "../../../State/customer/ProductSlice";
+import { addItemToCart } from "../../../State/customer/CartSlice";
+import { addProductToWishlist } from "../../../State/customer/wishlistSlice";
+import { useNavigate } from "react-router-dom";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useAppDispatch();
   const { productId } = useParams();
   const [activeImage, setActiveImage] = useState(0);
+  const navigate = useNavigate();
 
-  const { product } = useAppSelector((store) => store);
+  const { product, auth } = useAppSelector((store) => store);
 
   useEffect(() => {
     // TS workaround: fetchProductById expects `productId: unknown` because createAsyncThunk argument type isn't inferred here.
@@ -39,6 +43,21 @@ const ProductDetails = () => {
 
   const handleActiveImage = (value: number) => {
     setActiveImage(value);
+  };
+  const requireLogin = () => {
+    if (!auth.jwt && !localStorage.getItem("jwt")) {
+      navigate("/login");
+      return false;
+    }
+    return true;
+  };
+  const addToCart = () => {
+    if (!product.product?.id || !requireLogin()) return;
+    dispatch(addItemToCart({ jwt: auth.jwt || localStorage.getItem("jwt"), request: { productId: product.product.id, size: String(product.product.sizes || "Standard"), quantity } }));
+  };
+  const addToWishlist = () => {
+    if (!product.product?.id || !requireLogin()) return;
+    dispatch(addProductToWishlist({ productId: product.product.id }));
   };
   return (
     <div className="px-5 lg:px-20 pt-10">
@@ -64,7 +83,7 @@ const ProductDetails = () => {
         </section>
 
         <section>
-          <h1 className="font-bold text-lg text-primary-color">{product.product?.seller?.businessDetails.businessName}</h1>
+          <h1 className="font-bold text-lg text-primary-color">{product.product?.seller?.businessDetails?.businessName || "Velvora Select"}</h1>
           <p className="text-gray-500 font-semibold">{product.product?.title}</p>
           <div className="flex justify-between items-center py-2 border w-[180px] px-3 mt-5">
             <div className="flex gap-1 items-center">
@@ -124,6 +143,7 @@ const ProductDetails = () => {
 
           <div className="mt-12 flex items-center gap-5">
             <Button
+              onClick={addToCart}
               fullWidth
               startIcon={<AddShoppingCart />}
               variant="contained"
@@ -133,6 +153,7 @@ const ProductDetails = () => {
             </Button>
 
             <Button
+              onClick={addToWishlist}
               fullWidth
               startIcon={<FavoriteBorderIcon />}
               variant="outlined"

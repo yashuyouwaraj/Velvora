@@ -1,7 +1,10 @@
 import { Divider } from "@mui/material";
 import ProfileFieldCard from "../../../component/ProfileFieldCard";
+import { useAppSelector } from "../../../State/Store";
 
 const UserDetails = () => {
+  const { auth } = useAppSelector((store) => store);
+
   return (
     <div className="flex justify-center py-10">
       <div className="w-full lg:w-[70%]">
@@ -9,11 +12,11 @@ const UserDetails = () => {
           <h1 className="text-2xl font-bold text-gray-600">Personal Details</h1>
         </div>
         <div>
-          <ProfileFieldCard keys="Name" value={"Yashu"} />
+          <ProfileFieldCard keys="Name" value={auth.user?.fullName || ""} />
           <Divider />
-          <ProfileFieldCard keys="Email" value={"yashu@gmail.com"} />
+          <ProfileFieldCard keys="Email" value={auth.user?.email || ""} />
           <Divider />
-          <ProfileFieldCard keys="Mobile" value={"8912340812"} />
+          <ProfileFieldCard keys="Mobile" value={auth.user?.mobile || ""} />
         </div>
       </div>
     </div>

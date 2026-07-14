@@ -28,7 +28,7 @@ export const signin = createAsyncThunk<any, any>(
 );
 
 export const signup = createAsyncThunk<any, any>(
-  "/auth/signin",
+  "/auth/signup",
   async (signupRequest, { rejectWithValue }) => {
     try {
       const response = await api.post("/auth/signup", signupRequest);

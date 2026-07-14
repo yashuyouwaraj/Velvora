@@ -1,15 +1,22 @@
 package com.Velvora.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.Velvora.model.Home;
 import com.Velvora.model.HomeCategory;
 import com.Velvora.service.HomeCategoryService;
 import com.Velvora.service.HomeService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +38,14 @@ public class HomeCategoryController {
     public ResponseEntity<List<HomeCategory>> getHomeCategory() throws Exception{
         List<HomeCategory> categories = homeCategoryService.getAllHomeCategories();
         return ResponseEntity.ok(categories);
+    }
+
+    @PostMapping("/admin/home-category")
+    public ResponseEntity<HomeCategory> createHomeCategory(
+            @RequestBody HomeCategory homeCategory
+    ) {
+        HomeCategory createdCategory = homeCategoryService.createHomeCategory(homeCategory);
+        return ResponseEntity.ok(createdCategory);
     }
 
     @PatchMapping("/admin/home-category/{id}")

@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -13,8 +14,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../State/Store";
+import {
+  fetchAdminSellers,
+  updateSellerAccountStatus,
+} from "../../../State/admin/adminSellerSlice";
+import { Seller } from "../../../types/SellerTypes";
 
 const accountStatu = [
   {
@@ -69,47 +77,81 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
+const statusOptions = [
+  {
+    status: "ALL",
+    title: "All Sellers",
+  },
+  {
+    status: "PENDING_VERIFICATION",
+    title: "Pending Verification",
+  },
+  {
+    status: "ACTIVE",
+    title: "Active",
+  },
+  {
+    status: "SUSPENDED",
+    title: "Suspended",
+  },
+  {
+    status: "DEACTIVATED",
+    title: "Deactivated",
+  },
+  {
+    status: "BANNED",
+    title: "Banned",
+  },
+  {
+    status: "CLOSED",
+    title: "Closed",
+  },
 ];
 
 const SellersTable = () => {
-  const [accountStatus, setAccountStatus] = useState("ACTIVE");
+  const dispatch = useAppDispatch();
+  const { adminSellers } = useAppSelector((store) => store);
+  const [accountStatus, setAccountStatus] = useState("ALL");
 
-  const handleChange = (event: any) => {
+  useEffect(() => {
+    dispatch(fetchAdminSellers({ status: accountStatus }));
+  }, [dispatch, accountStatus]);
+
+  const handleStatusChange = (event: any) => {
     setAccountStatus(event.target.value);
   };
+
+  const handleUpdateStatus = (seller: Seller, newStatus: string) => {
+    dispatch(updateSellerAccountStatus({ id: seller.id!, status: newStatus }));
+  };
+
   return (
     <>
-      <div className="pb-5 w-60">
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Account Status</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={accountStatus}
-            label="Account Status"
-            onChange={handleChange}
-          >
-            {accountStatu.map((item) => (
-              <MenuItem value={item.status}>{item.title}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-5">
+        <div className="w-full md:w-80">
+          <FormControl fullWidth>
+            <InputLabel id="seller-status-select-label">Account Status</InputLabel>
+            <Select
+              labelId="seller-status-select-label"
+              id="seller-status-select"
+              value={accountStatus}
+              label="Account Status"
+              onChange={handleStatusChange}
+            >
+              {statusOptions.map((item) => (
+                <MenuItem key={item.status} value={item.status}>
+                  {item.title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        {adminSellers.loading && (
+          <div className="flex items-center gap-2">
+            <CircularProgress size={20} />
+            <Typography>Loading sellers</Typography>
+          </div>
+        )}
       </div>
 
       <TableContainer component={Paper}>
@@ -120,27 +162,50 @@ const SellersTable = () => {
               <StyledTableCell>Email</StyledTableCell>
               <StyledTableCell align="right">Mobile</StyledTableCell>
               <StyledTableCell align="right">GSTIN</StyledTableCell>
-              <StyledTableCell align="right">Bussiness Name</StyledTableCell>
+              <StyledTableCell align="right">Business Name</StyledTableCell>
               <StyledTableCell align="right">Account Status</StyledTableCell>
               <StyledTableCell align="right">Change Status</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.name}>
+            {adminSellers.sellers.map((seller) => (
+              <StyledTableRow key={seller.id}>
                 <StyledTableCell component="th" scope="row">
-                  {row.name}
+                  {seller.sellerName}
                 </StyledTableCell>
-                <StyledTableCell>{row.calories}</StyledTableCell>
-                <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                <StyledTableCell align="right">{row.protein}</StyledTableCell>
-                <StyledTableCell align="right">{row.carbs}</StyledTableCell>
+                <StyledTableCell>{seller.email}</StyledTableCell>
+                <StyledTableCell align="right">{seller.mobile}</StyledTableCell>
+                <StyledTableCell align="right">{seller.GSTIN}</StyledTableCell>
+                <StyledTableCell align="right">{seller.businessDetails?.businessName}</StyledTableCell>
+                <StyledTableCell align="right">{seller.accountStatus}</StyledTableCell>
                 <StyledTableCell align="right">
-                  <Button>Change</Button>
+                  <FormControl fullWidth>
+                    <Select
+                      value={seller.accountStatus}
+                      onChange={(event) =>
+                        handleUpdateStatus(seller, event.target.value as string)
+                      }
+                      size="small"
+                    >
+                      {statusOptions
+                        .filter((option) => option.status !== "ALL")
+                        .map((option) => (
+                          <MenuItem key={option.status} value={option.status}>
+                            {option.title}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
                 </StyledTableCell>
               </StyledTableRow>
             ))}
+            {adminSellers.sellers.length === 0 && !adminSellers.loading && (
+              <StyledTableRow>
+                <StyledTableCell colSpan={7} align="center">
+                  <Typography>No sellers found for this status.</Typography>
+                </StyledTableCell>
+              </StyledTableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

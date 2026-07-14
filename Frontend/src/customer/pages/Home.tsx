@@ -1,30 +1,41 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ElectricCategory from "./Home/ElectricCategory/ElectricCategory";
 import CategoryGrid from "./Home/CategoryGrid/CategoryGrid";
 import Deal from "./Home/Deal/Deal";
 import ShopByCategory from "./Home/ShopByCategory/ShopByCategory";
 import { Storefront } from "@mui/icons-material";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../State/Store";
+import { fetchAllProducts } from "../../State/customer/ProductSlice";
 
 const Home = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { products } = useAppSelector((state) => state.product);
+
+  useEffect(() => {
+    dispatch(fetchAllProducts({ pageNumber: 0 }));
+  }, [dispatch]);
+
   return (
     <>
       <div className="space-y-5 lg:space-y-10 relative pb-20">
-        <ElectricCategory />
-        <CategoryGrid />
+        <ElectricCategory products={products} />
+        <CategoryGrid products={products} />
 
         <section className="pt-20">
           <h1 className="text-lg lg:text-4xl font-bold text-primary-color pb-5 lg:pb-10 text-center">
             TODAY'S DEAL
           </h1>
-          <Deal />
+          <Deal products={products} />
         </section>
 
         <section className="pt-20">
           <h1 className="text-lg lg:text-4xl font-bold text-primary-color pb-5 lg:pb-20 text-center">
             SHOP BY CATEGORY
           </h1>
-          <ShopByCategory />
+          <ShopByCategory products={products} />
         </section>
 
         <section className="mt-20 lg:px-20 relative h-[200px] lg:h-[450px] object-cover ">
@@ -40,7 +51,7 @@ const Home = () => {
             </p>
 
             <div>
-              <Button startIcon={<Storefront/> } variant='contained' size='large'>
+              <Button onClick={() => navigate("/become-seller")} startIcon={<Storefront/> } variant='contained' size='large'>
                 Become Seller
               </Button>
             </div>

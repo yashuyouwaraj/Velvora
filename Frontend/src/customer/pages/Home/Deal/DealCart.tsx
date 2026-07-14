@@ -1,19 +1,19 @@
-import React from "react";
+import { Deal } from "../../../../types/DealTypes";
+import { Product } from "../../../../types/ProductTypes";
 
-const DealCart = () => {
-  return (
-    <div className="w-[13rem] cursor-pointer ">
-      <img className="border-x-[7px] border-t-[7px] border-pink-600 w-full h-[12rem] object-cover object-top "
-        src="https://gourban.in/cdn/shop/files/Pulse.jpg?v=1749553994&width=2048"
-        alt=""
-      />
-      <div className="border-4 border-black bg-black text-white p-2 text-center">
-        <p className="text-lg font-semibold">Smart Watch</p>
-        <p className="text-2xl font-bold">20% OFF</p>
-        <p className="text-balance text-lg">shop now</p>
-      </div>
+const DealCart = ({ item }: { item: Deal }) => (
+  <button className="w-full text-left cursor-pointer rounded-md overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+    <img
+      className="w-full h-48 object-cover"
+      src={item.category.image}
+      alt=""
+    />
+    <div className="bg-gray-950 text-white p-3 text-center">
+      <p className="font-semibold truncate">{item.category.name}</p>
+      <p className="text-xl font-bold text-teal-300">{item.discount}% OFF</p>
+      <p className="text-sm">Shop now</p>
     </div>
-  );
-};
+  </button>
+);
 
 export default DealCart;

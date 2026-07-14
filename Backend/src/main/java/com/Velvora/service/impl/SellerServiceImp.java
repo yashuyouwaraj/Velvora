@@ -2,13 +2,13 @@ package com.Velvora.service.impl;
 
 import java.util.List;
 
-import com.Velvora.exceptions.SellerException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.Velvora.config.JwtProvider;
 import com.Velvora.domain.AccountStatus;
 import com.Velvora.domain.USER_ROLE;
+import com.Velvora.exceptions.SellerException;
 import com.Velvora.model.Address;
 import com.Velvora.model.Seller;
 import com.Velvora.repository.AddressRepository;
@@ -73,6 +73,9 @@ public class SellerServiceImp implements SellerService {
 
     @Override
     public List<Seller> getAllSellers(AccountStatus status) {
+        if (status == null) {
+            return sellerRepository.findAll();
+        }
         return sellerRepository.findByAccountStatus(status);
     }
 

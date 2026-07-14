@@ -18,6 +18,7 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -25,10 +26,16 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
-    private PaymentOrderRepository paymentOrderRepository;
-    private OrderRepository orderRepository;
+    private final PaymentOrderRepository paymentOrderRepository;
+    private final OrderRepository orderRepository;
+
+    @Value("${razorpay.api.key}")
     private String apiKey="";
+
+    @Value("${razorpay.api.secret}")
     private String apiSecret="";
+
+    @Value("${stripe.api.key}")
     private String stripeSecretKey="";
 
     @Override

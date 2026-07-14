@@ -1,11 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../State/Store";
 import { useFormik } from "formik";
 import { Button, CircularProgress, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { sendLoginSignupOtp, signin } from "../../../State/AuthSlice";
+
+const parseJwtPayload = (token: string) => {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+  } catch {
+    return null;
+  }
+};
+
+const getTokenRole = (token: string | null) => {
+  if (!token) return null;
+  const claims = parseJwtPayload(token);
+  if (!claims) return null;
+  const authorities = claims.authorities || claims.role || claims.roles;
+  if (!authorities) return null;
+  const values = Array.isArray(authorities)
+    ? authorities
+    : String(authorities).split(",");
+  if (values.includes("ROLE_ADMIN")) return "/admin";
+  if (values.includes("ROLE_SELLER")) return "/seller";
+  if (values.includes("ROLE_CUSTOMER")) return "/";
+  return null;
+};
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { auth } = useAppSelector((store) => store);
   const formik = useFormik({
     initialValues: {
@@ -14,7 +41,6 @@ const LoginForm = () => {
     },
     onSubmit: (values) => {
       console.log("Form data", values);
-      // values.otp=Number(values.otp)
       dispatch(signin(values));
     },
   });
@@ -22,6 +48,14 @@ const LoginForm = () => {
   const handleSendOtp = () => {
     dispatch(sendLoginSignupOtp({ email: formik.values.email }));
   };
+
+  useEffect(() => {
+    const token = auth.jwt || localStorage.getItem("jwt");
+    const redirectPath = getTokenRole(token);
+    if (redirectPath) {
+      navigate(redirectPath, { replace: true });
+    }
+  }, [auth.jwt, navigate]);
 
   return (
     <div>

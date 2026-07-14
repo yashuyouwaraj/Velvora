@@ -1,12 +1,14 @@
 package com.Velvora.service.impl;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.Velvora.model.HomeCategory;
 import com.Velvora.repository.HomeCategoryRepository;
 import com.Velvora.service.HomeCategoryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +33,17 @@ public class HomeCategoryServiceImpl implements HomeCategoryService {
         HomeCategory existingCategory = homeCategoryRepository.findById(id)
                 .orElseThrow(()-> new Exception("Category not found"));
 
-        if(category.getImage()!=null){
+        if (category.getImage() != null) {
             existingCategory.setImage(category.getImage());
         }
-        if(category.getCategoryId()!=null){
+        if (category.getCategoryId() != null) {
             existingCategory.setCategoryId(category.getCategoryId());
+        }
+        if (category.getName() != null) {
+            existingCategory.setName(category.getName());
+        }
+        if (category.getSection() != null) {
+            existingCategory.setSection(category.getSection());
         }
         return homeCategoryRepository.save(existingCategory);
     }

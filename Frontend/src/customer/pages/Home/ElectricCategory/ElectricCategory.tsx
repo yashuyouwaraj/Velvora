@@ -1,12 +1,19 @@
-import React from 'react'
-import ElectricCategoryCard from './ElectricCategoryCard'
+import { useNavigate } from "react-router-dom";
+import { Product } from "../../../../types/ProductTypes";
+import ElectricCategoryCard from "./ElectricCategoryCard";
+import { useAppSelector } from "../../../../State/Store";
 
-const ElectricCategory = () => {
+const ElectricCategory = ({ products }: { products: Product[] }) => {
+  const { customer } = useAppSelector((store) => store);
+  const electricCategories = customer.homePageData?.electricCategories ?? [];
+
   return (
-    <div className='flex flex-wrap justify-between py-5 lg:px-20 border-b'>
-        {[1,1,1,1,1,1,1].map((item)=><ElectricCategoryCard />)}
+    <div className="flex flex-wrap justify-center gap-6 py-5 lg:px-20 border-b">
+      {electricCategories.slice(0, 7).map((item) => (
+        <ElectricCategoryCard key={item.categoryId} item={item} />
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default ElectricCategory
+export default ElectricCategory;

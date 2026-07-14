@@ -1,26 +1,37 @@
-import React, { useState } from "react";
-import CartItem from "./CartItem";
+import React, { useEffect, useState } from "react";
+import CartItem from "./CartItemCard";
 import { Close, LocalOffer } from "@mui/icons-material";
 import { teal } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import { Button, IconButton } from "@mui/material";
 import PricingCard from "./PricingCard";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../State/Store";
+import { fetchUserCart } from "../../../State/customer/CartSlice";
 
 const Cart = () => {
   const [couponCode, setCouponCode] = useState<string>("");
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e: any) => {
     setCouponCode(e.target.value);
   };
+
+  const dispatch = useAppDispatch();
+  const {cart} = useAppSelector((store) => store);
+
+
+  useEffect(() => {
+    dispatch(fetchUserCart(localStorage.getItem("jwt") || ""));
+  }, []);
+
   return (
     <div className="pt-10 px-5 sm:px-10 md:px-60 min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="cartItemSection lg:col-span-2 space-y-3">
-          {[1, 1, 1, 1, 1, 1, 1].map((item) => (
-            <CartItem />
+          {cart.cart?.cartItems.map((item) => (
+            <CartItem key={item.id} item={item}/>
           ))}
         </div>
         <div className="col-span-1 text-sm space-y-3">
@@ -32,36 +43,41 @@ const Cart = () => {
                 </div>
                 <span>Apply Coupons</span>
               </div>
-              { true ? <div className="flex justify-between items-center mt-3">
-                <TextField
-                  onChange={handleChange}
-                  id="outlined-basic"
-                  placeholder="coupon code"
-                  size="small"
-                  variant="outlined"
-                />
-                <Button size="small">Apply</Button>
-              </div> 
-              :
-              <div className="flex">
-                <div className="p-1 pl-5 pr-3 border rounded-md flex gap-2 items-center">
+              {true ? (
+                <div className="flex justify-between items-center mt-3">
+                  <TextField
+                    onChange={handleChange}
+                    id="outlined-basic"
+                    placeholder="coupon code"
+                    size="small"
+                    variant="outlined"
+                  />
+                  <Button size="small">Apply</Button>
+                </div>
+              ) : (
+                <div className="flex">
+                  <div className="p-1 pl-5 pr-3 border rounded-md flex gap-2 items-center">
                     <span> VEL300 Applied </span>
                     <IconButton size="small">
-                        <Close className="text-red-600"/>
+                      <Close className="text-red-600" />
                     </IconButton>
+                  </div>
                 </div>
-              </div>
-
-              }
+              )}
             </div>
           </div>
 
           <div className="border rounded-md">
             <PricingCard />
             <div className="p-5">
-                <Button onClick={()=> navigate("/checkout")} fullWidth variant="contained" sx={{py:"11px"}}>
-                    Buy Now
-                </Button>
+              <Button
+                onClick={() => navigate("/checkout")}
+                fullWidth
+                variant="contained"
+                sx={{ py: "11px" }}
+              >
+                Buy Now
+              </Button>
             </div>
           </div>
         </div>

@@ -1,5 +1,11 @@
 package com.Velvora.service.impl;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import com.Velvora.model.Cart;
 import com.Velvora.model.Coupon;
 import com.Velvora.model.User;
@@ -7,12 +13,8 @@ import com.Velvora.repository.CartRepository;
 import com.Velvora.repository.CouponRepository;
 import com.Velvora.repository.UserRepository;
 import com.Velvora.service.CouponService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +89,34 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     @PreAuthorize("hasRole ('ADMIN')")
+    public Coupon updateCoupon(Long id, Coupon coupon) throws Exception {
+        Coupon existingCoupon = couponRepository.findById(id)
+                .orElseThrow(() -> new Exception("coupon not found"));
+
+        if (coupon.getCode() != null) {
+            existingCoupon.setCode(coupon.getCode());
+        }
+        if (coupon.getDiscountPercentage() != 0) {
+            existingCoupon.setDiscountPercentage(coupon.getDiscountPercentage());
+        }
+        if (coupon.getValidityStartDate() != null) {
+            existingCoupon.setValidityStartDate(coupon.getValidityStartDate());
+        }
+        if (coupon.getValidityEndDate() != null) {
+            existingCoupon.setValidityEndDate(coupon.getValidityEndDate());
+        }
+        if (coupon.getMinimumOrderValue() != 0) {
+            existingCoupon.setMinimumOrderValue(coupon.getMinimumOrderValue());
+        }
+        if (coupon.getIsActive() != null) {
+            existingCoupon.setIsActive(coupon.getIsActive());
+        }
+
+        return couponRepository.save(existingCoupon);
+    }
+
+    @Override
+    @PreAuthorize("hasRole ('ADMIN')")
     public List<Coupon> findAllCoupons() {
         return couponRepository.findAll();
     }
@@ -96,6 +126,5 @@ public class CouponServiceImpl implements CouponService {
     public void deleteCoupon(Long id) throws Exception {
         findCouponById(id);
         couponRepository.deleteById(id);
-
     }
 }

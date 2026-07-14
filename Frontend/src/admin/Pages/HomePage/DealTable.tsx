@@ -8,6 +8,9 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button, IconButton } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "../../../State/Store";
+import { useEffect } from "react";
+import { fetchDeals } from "../../../State/admin/DealSlice";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -29,25 +32,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-
 export default function DealTable() {
+  const dispatch = useAppDispatch()
+  const {deal} = useAppSelector(store=>store)
+
+  useEffect(()=>{
+    dispatch(fetchDeals())
+  },[])
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -62,14 +53,16 @@ export default function DealTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
+          {deal.deals.map((item,index) => (
+            <StyledTableRow key={item.id}>
               <StyledTableCell component="th" scope="row">
-                {row.name}
+                {index+1}
               </StyledTableCell>
-              <StyledTableCell>{row.calories}</StyledTableCell>
-              <StyledTableCell>{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
+              <StyledTableCell>
+                <img className="w-20 rounded-md" src={item.category.image} alt="" />
+              </StyledTableCell>
+              <StyledTableCell>{item.category.categoryId}</StyledTableCell>
+              <StyledTableCell align="right">{item.discount}</StyledTableCell>
               <StyledTableCell align="right">
                 <Button>
                   <Edit />

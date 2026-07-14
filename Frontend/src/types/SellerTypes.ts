@@ -15,20 +15,25 @@ export interface BankDetails {
 }
 
 export interface BusinessDetails {
-  businessName: string;
+  businessName?: string;
+  businessEmail?: string;
+  businessMobile?: string;
+  businessAddress?: string;
+  logo?: string;
+  banner?: string;
 }
 
 export interface Seller {
   id?: number;
-  mobile: string;
-  otp: string;
-  GSTIN: string;
-  pickupAddress: PickupAddress;
-  bankDetails: BankDetails;
-  sellerName: string;
-  email: string;
-  businessDetails: BusinessDetails;
-  password: string;
+  mobile?: string;
+  otp?: string;
+  GSTIN?: string;
+  pickupAddress?: PickupAddress;
+  bankDetails?: BankDetails;
+  sellerName?: string;
+  email?: string;
+  businessDetails?: BusinessDetails;
+  password?: string;
   accountStatus?: string;
 }
 
@@ -39,8 +44,8 @@ export interface SellerReport {
   totalSales: number;
   totalRefunds: number;
   totalTax: number;
-  netEarning: number;
+  netEarnings: number;
   totalOrders: number;
-  canceledOrders: number;
+  cancelledOrders: number;
   totalTransactions: number;
 }

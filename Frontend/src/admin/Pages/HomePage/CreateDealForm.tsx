@@ -10,8 +10,12 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import React from "react";
+import { useAppDispatch, useAppSelector } from "../../../State/Store";
+import { createDeal } from "../../../State/admin/DealSlice";
 
 const CreateDealForm = () => {
+  const dispatch = useAppDispatch();
+  const { customer } = useAppSelector((store) => store);
   const formik = useFormik({
     initialValues: {
       discount: 0,
@@ -19,6 +23,13 @@ const CreateDealForm = () => {
     },
     onSubmit: (values) => {
       console.log(values);
+      const reqData = {
+        discount: values.discount,
+        category: {
+          id: values.category,
+        },
+      };
+      dispatch(createDeal(reqData));
     },
   });
   return (
@@ -50,13 +61,13 @@ const CreateDealForm = () => {
           label="Category"
           onChange={formik.handleChange}
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          {customer.homePageData?.dealCategories.map((item) => (
+            <MenuItem value={item.id}>{item.name}</MenuItem>
+          ))}
         </Select>
       </FormControl>
 
-      <Button type="submit" variant="contained" fullWidth sx={{py:".9rem"}}>
+      <Button type="submit" variant="contained" fullWidth sx={{ py: ".9rem" }}>
         Create Deal
       </Button>
     </Box>

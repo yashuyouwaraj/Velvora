@@ -1,6 +1,8 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useAppDispatch } from "../../../State/Store";
+import { createOrder } from "../../../State/customer/orderSlice";
 
 const AddressFormSchema = Yup.object().shape({
   name: Yup.string()
@@ -24,12 +26,13 @@ const AddressFormSchema = Yup.object().shape({
   state: Yup.string().required("State is required"),
 });
 
-const AddressForm = () => {
+const AddressForm = ({ paymentGateway }: any) => {
+  const dispatch = useAppDispatch();
   const formik = useFormik({
     initialValues: {
       name: "",
       mobile: "",
-      pincode: "",
+      pinCode: "",
       address: "",
       city: "",
       state: "",
@@ -38,7 +41,13 @@ const AddressForm = () => {
     validationSchema: AddressFormSchema,
     onSubmit: (values) => {
       //submit Form
-      console.log(values);
+      dispatch(
+        createOrder({
+          address: values,
+          jwt: localStorage.getItem("jwt") || "",
+          paymentGateway:paymentGateway,
+        }),
+      );
     },
   });
 
@@ -75,10 +84,10 @@ const AddressForm = () => {
               fullWidth
               name="pincode"
               label="Pin code"
-              value={formik.values.pincode}
+              value={formik.values.pinCode}
               onChange={formik.handleChange}
-              error={formik.touched.pincode && Boolean(formik.errors.pincode)}
-              helperText={formik.touched.pincode && formik.errors.pincode}
+              error={formik.touched.pinCode && Boolean(formik.errors.pinCode)}
+              helperText={formik.touched.pinCode && formik.errors.pinCode}
             />
           </Grid>
           <Grid size={{ xs: 12 }}>

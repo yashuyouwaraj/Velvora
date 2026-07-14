@@ -134,11 +134,11 @@ public class ProductServiceImpl implements ProductService {
             }
 
             if(minDiscount !=null){
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("discountPercentage"),minDiscount));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("discountPercent"),minDiscount));
             }
 
             if(stock !=null){
-                predicates.add(criteriaBuilder.equal(root.get("stock"),stock));
+                predicates.add(criteriaBuilder.greaterThan(root.get("quantity"), 0));
             }
 
             return criteriaBuilder.and((predicates.toArray(new Predicate[0])));
