@@ -1,12 +1,13 @@
 package com.Velvora.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
