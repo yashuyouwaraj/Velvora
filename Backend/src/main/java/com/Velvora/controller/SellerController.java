@@ -2,9 +2,6 @@ package com.Velvora.controller;
 
 import java.util.List;
 
-import com.Velvora.exceptions.SellerException;
-import com.Velvora.model.SellerReport;
-import com.Velvora.service.SellerReportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Velvora.domain.AccountStatus;
+import com.Velvora.exceptions.SellerException;
 import com.Velvora.model.Seller;
+import com.Velvora.model.SellerReport;
 import com.Velvora.model.VerificationCode;
 import com.Velvora.repository.VerificationCodeRepository;
 import com.Velvora.request.LoginRequest;
 import com.Velvora.response.AuthResponse;
 import com.Velvora.service.AuthService;
 import com.Velvora.service.EmailService;
+import com.Velvora.service.SellerReportService;
 import com.Velvora.service.SellerService;
 import com.Velvora.utils.OtpUtil;
 
