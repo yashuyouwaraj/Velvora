@@ -36,39 +36,37 @@ public class AppConfig {
                         .anyRequest().permitAll())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .csrf(csrf->csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigrationSource()));
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
     }
 
-    private CorsConfigurationSource corsConfigrationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration cfg = new CorsConfiguration();
-                List<String> origins = Arrays.stream(allowedOrigins.split(","))
-                        .map(String::trim)
-                        .filter(origin -> !origin.isEmpty())
-                        .toList();
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration cfg = new CorsConfiguration();
+            List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                    .map(String::trim)
+                    .filter(origin -> !origin.isEmpty())
+                    .toList();
 
-                if (origins.isEmpty()) {
-                    cfg.addAllowedOriginPattern("*");
-                    log.info("CORS: no origins configured, allowing all origins");
-                } else if (origins.size() == 1 && "*".equals(origins.get(0))) {
-                    cfg.addAllowedOriginPattern("*");
-                    log.info("CORS: wildcard origin enabled");
-                } else {
-                    cfg.setAllowedOriginPatterns(origins);
-                    log.info("CORS: allowed origins = {}", origins);
-                }
-
-                cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                cfg.setAllowedHeaders(List.of("*"));
-                cfg.setAllowCredentials(true);
-                cfg.setExposedHeaders(List.of("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-                cfg.setMaxAge(3600L);
-                return cfg;
+            if (origins.isEmpty()) {
+                cfg.addAllowedOriginPattern("*");
+                log.info("CORS: no origins configured, allowing all origins");
+            } else if (origins.size() == 1 && "*".equals(origins.get(0))) {
+                cfg.addAllowedOriginPattern("*");
+                log.info("CORS: wildcard origin enabled");
+            } else {
+                origins.forEach(cfg::addAllowedOriginPattern);
+                log.info("CORS: allowed origins = {}", origins);
             }
+
+            cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+            cfg.setAllowedHeaders(List.of("*"));
+            cfg.setAllowCredentials(true);
+            cfg.setExposedHeaders(List.of("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+            cfg.setMaxAge(3600L);
+            return cfg;
         };
     }
 
